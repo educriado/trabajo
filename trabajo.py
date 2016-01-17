@@ -106,7 +106,7 @@ def load_enron_folder(path):
    spam_validation_labels = [1] * num_spam_validation
    print(len(spam_validation_labels))
 
-   spam_test_mail = spam_mail[num_spam_training + 
+   spam_test_mail = spam_mail[num_spam_training +
                                             num_spam_validation:num_spam_mails]
    print(num_spam_mails-num_spam_training-num_spam_validation)
    print(len(spam_test_mail))
@@ -151,8 +151,8 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
     tam_part_valid = len(validation_mails) / k
     for alpha in range(1, 10):
 
-        err_training = 0.0
-        err_validation = 0.0
+        error_training = 0.0
+        error_validation = 0.0
         for fold in range(1, k):
             # cogemos la particion para los mails de entrenamiento
             particion_training = training_mails[(tam_part_train * (fold - 1)):
@@ -160,6 +160,7 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
             particion_training_labels = training_labels[
                                                 (tam_part_train * (fold - 1)):
                                                 (tam_part_train * fold)]
+            print len(particion_training), len(particion_training_labels)
             # hacemos lo mismo para los de validacion
             particion_validation = validation_mails[(tam_part_valid * (fold - 1)):
                                                     (tam_part_valid * fold)]
@@ -179,21 +180,21 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
             # ahora tenemos que entrenar el clasificador
             if clasificador == "Multinomial":
                 classifier = MultinomialNB(alpha).fit(frecuencias_training,
-                                                           training_labels)
+                                                    particion_training_labels)
             else:
                 classifier = BernoulliNB(alpha).fit(frecuencias_training,
-                                                            training_labels)
+                                                    particion_training_labels)
             training_predictions = classifier.predict(frecuencias_training)
             validation_predictions = classifier.predict(frecuencias_validation)
             error_training += num_errores(training_predictions,
-                                                                training_labels)
-            error_validacion += num_errores(validation_predictions,
-                                                            validation_labels)
+                                                    particion_training_labels)
+            error_validation += num_errores(validation_predictions,
+                                                   particion_validation_labels)
         error_training /= k
-        error_validacion /= k
-        if error_validacion < error_mejor:
+        error_validation /= k
+        if error_validation < error_mejor:
             mejor_alpha = alpha
-            error_mejor = error_validacion
+            error_mejor = error_validation
     return mejor_alpha
 
 ######################################################
@@ -203,7 +204,7 @@ def main():
     print("Starting...")
 
     # Path to the folder containing the mails
-    folder_enron1 = r'../enron-spam/enron1' 
+    folder_enron1 = r'../enron-spam/enron1'
     # Load mails
     data1 = load_enron_folder(folder_enron1)
     folder_enron2 = r'../enron-spam/enron2'
@@ -211,6 +212,8 @@ def main():
     data2 = load_enron_folder(folder_enron2)
     training_mails = data1['training_mails']+data2['training_mails']
     training_labels = data1['training_labels']+data2['training_labels']
+    print len(training_mails)
+    print len(training_labels)
     validation_mails = data1['validation_mails']+data2['validation_mails']
     validation_labels = data1['validation_labels']+data2['validation_labels']
     test_mails = data1['test_mails']+data2['test_mails']
@@ -239,8 +242,9 @@ def main():
                                                         training_labels)
     #Se predice con los valore de test
     test_predictions = classifier.predict(frecuencias_test)
+    print len(test_predictions)
     puntuacion = num_errores(test_predictions, test_labels) / float(len(
-                                                                predicciones))
+                                                            test_predictions))
     print "Porcentaje de fallos: ", puntuacion*100, "%"
     return 1
 
