@@ -150,7 +150,6 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
     tam_part_train = len(training_mails) / k
     tam_part_valid = len(validation_mails) / k
     for alpha in range(1, 10):
-
         error_training = 0.0
         error_validation = 0.0
         for fold in range(1, k):
@@ -160,20 +159,19 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
             particion_training_labels = training_labels[
                                                 (tam_part_train * (fold - 1)):
                                                 (tam_part_train * fold)]
-            print len(particion_training), len(particion_training_labels)
             # hacemos lo mismo para los de validacion
             particion_validation = validation_mails[(tam_part_valid * (fold - 1)):
                                                     (tam_part_valid * fold)]
             particion_validation_labels = validation_labels[
                                                     (tam_part_valid * (fold - 1)):
                                                     (tam_part_valid * fold)]
-            cv = CountVectorizer()
-            cv = cv.fit(particion_training + particion_validation)
+            
+            # vamos a crear la bolsa de palabras y a rellenarla
+            cv = CountVectorizer().fit(particion_training + particion_validation)
             matriz_training = cv.transform(particion_training)
             matriz_validation = cv.transform(particion_validation)
-            # normalizamos
-            tfid = TfidfTransformer()
-            frecuencias = tfid.fit(matriz_training)
+            # obtenemos la bolsa con la frecuencia
+            tfid = TfidfTransformer().fit(matriz_training)
             frecuencias_training = tfid.transform(matriz_training)
             frecuencias_validation = tfid.transform(matriz_validation)
             # ya tenemos las bolsas de palabras con la frecuencia de aparicion
@@ -190,6 +188,7 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
                                                     particion_training_labels)
             error_validation += num_errores(validation_predictions,
                                                    particion_validation_labels)
+        # hallamos la media de errores
         error_training /= k
         error_validation /= k
         if error_validation < error_mejor:
@@ -212,8 +211,6 @@ def main():
     data2 = load_enron_folder(folder_enron2)
     training_mails = data1['training_mails']+data2['training_mails']
     training_labels = data1['training_labels']+data2['training_labels']
-    print len(training_mails)
-    print len(training_labels)
     validation_mails = data1['validation_mails']+data2['validation_mails']
     validation_labels = data1['validation_labels']+data2['validation_labels']
     test_mails = data1['test_mails']+data2['test_mails']
@@ -224,16 +221,16 @@ def main():
     clasificador = "Multinomial"
     suavizado = mejor_alpha(10, training_mails, training_labels,
                               validation_mails, validation_labels, clasificador)
-    cv = CountVectorizer()
-    cv = cv.fit(training_mails + test_mails)
+    print "El mejor suavizado es:", suavizado
+
+    # creamos la estructura de bolsa de palabras y rellenamos
+    cv = CountVectorizer().fit(training_mails + test_mails)
     matriz_training = cv.transform(training_mails)
     matriz_test = cv.transform(test_mails)
-    #Se normaliza la bolsa de palabras, de cuentas a porcentajes
-    tfid = TfidfTransformer()
-    tfid = tfid.fit(matriz_training)
+    # vamos a normalizar
+    tfid = TfidfTransformer().fit(matriz_training)
     frecuencias_training = tfid.transform(matriz_training)
     frecuencias_test = tfid.transform(matriz_test)
-    #Se crea el clasificador
     if clasificador == "Multinomial":
        classifier = MultinomialNB(suavizado).fit(frecuencias_training,
                                                         training_labels)
@@ -242,10 +239,10 @@ def main():
                                                         training_labels)
     #Se predice con los valore de test
     test_predictions = classifier.predict(frecuencias_test)
-    print len(test_predictions)
-    puntuacion = num_errores(test_predictions, test_labels) / float(len(
+    errores_test = num_errores(test_predictions, test_labels) / float(len(
                                                             test_predictions))
-    print "Porcentaje de fallos: ", puntuacion*100, "%"
+    print "Porcentaje de fallos: ", errores_test * 100, "%"
+    print "Porcentaje de aciertos: ", (1 - puntuacion) * 100, "%"
     return 1
 
 if __name__ == "__main__":
