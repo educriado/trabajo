@@ -143,7 +143,7 @@ def num_errores(predicciones, labels):
 ## Devuelve el mejor valor de suavizado posible
 ####################################################################
 def mejor_alpha(k, training_mails, training_labels, validation_mails,
-                                        validation_labels, clasificador):
+                                validation_labels, clasificador, uso_bigramas):
     error_mejor = len(training_mails)
     mejor_alpha = 0
     # calculamos los alphas de las particiones para los distintos correos
@@ -166,9 +166,14 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
             particion_validation_labels = validation_labels[
                                                     (tam_part_valid * (fold - 1)):
                                                     (tam_part_valid * fold)]
-            
+
             # vamos a crear la bolsa de palabras y a rellenarla
-            cv = CountVectorizer().fit(particion_training + particion_validation)
+            if uso_bigramas:
+                cv = CountVectorizer(ngram_range=(1,2)).fit(particion_training +
+                        particion_validation)
+            else:
+                cv = CountVectorizer().fit(particion_training +
+                        particion_validation)
             matriz_training = cv.transform(particion_training)
             matriz_validation = cv.transform(particion_validation)
             # obtenemos la bolsa con la frecuencia
@@ -232,12 +237,16 @@ def main():
     # primero vamos a construir los descriptores de la bolsa de palabras de cada
     # correo
     clasificador = "Bernoulli"
-    suavizado = mejor_alpha(5, training_mails, training_labels,
-                              validation_mails, validation_labels, clasificador)
+    uso_bigramas = False
+    suavizado = mejor_alpha(5, training_mails, training_labels, validation_mails,
+                                validation_labels, clasificador, uso_bigramas)
     print "El mejor suavizado es:", suavizado
 
     # creamos la estructura de bolsa de palabras y rellenamos
-    cv = CountVectorizer().fit(training_mails + test_mails)
+    if uso_bigramas:
+        cv = CountVectorizer(ngram_range=(1,2)).fit(training_mails + test_mails)
+    else:
+        cv = CountVectorizer().fit(training_mails + test_mails)
     matriz_training = cv.transform(training_mails)
     matriz_test = cv.transform(test_mails)
     # vamos a normalizar
@@ -256,6 +265,15 @@ def main():
                                                             test_predictions))
     print "Porcentaje de fallos: ", errores_test * 100, "%"
     print "Porcentaje de aciertos: ", (1 - errores_test) * 100, "%"
+    # vamos a sacar las metricas
+    conf_matrix = metrics.confusion_matrix(test_labels, test_predictions)
+    print conf_matrix
+    precision, recall, thresholds = metrics.precision_recall_curve(test_labels,
+                                                            test_predictions)
+    plt.plot(precision, recall, label="Curva de precision recall")
+    plt.show()
+    f1_score = metrics.f1_score(test_labels, test_predictions)
+    print f1_score
     return 1
 
 if __name__ == "__main__":
