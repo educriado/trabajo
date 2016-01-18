@@ -1,0 +1,7 @@
+Resultados con clasificador Multinomial, alpha = 1
+==================================================
+Porcentaje de fallos:  0.998185117967 %
+Porcentaje de aciertos:  99.001814882 %
+
+Resultados con clasficador Bernoulli, alpha = 
+==================================================

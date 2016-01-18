@@ -150,6 +150,7 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
     tam_part_train = len(training_mails) / k
     tam_part_valid = len(validation_mails) / k
     for alpha in range(1, 10):
+        print "El alpha vale ", alpha
         error_training = 0.0
         error_validation = 0.0
         for fold in range(1, k):
@@ -209,8 +210,20 @@ def main():
     folder_enron2 = r'../enron-spam/enron2'
     # Load mails
     data2 = load_enron_folder(folder_enron2)
-    training_mails = data1['training_mails']+data2['training_mails']
-    training_labels = data1['training_labels']+data2['training_labels']
+    # Load mails
+    folder_enron3 = r'../enron-spam/enron3'
+    data3 = load_enron_folder(folder_enron3)
+    # Load mails
+    folder_enron4 = r'../enron-spam/enron4'
+    data4 = load_enron_folder(folder_enron4)
+    # Load mails
+    folder_enron5 = r'../enron-spam/enron5'
+    data5 = load_enron_folder(folder_enron5)
+    # Load mails
+    folder_enron6 = r'../enron-spam/enron6'
+    data6 = load_enron_folder(folder_enron6)
+    training_mails = data1['training_mails']+data2['training_mails']+data3['training_mails']+data4['training_mails']+data5['training_mails']+data6['training_mails']
+    training_labels = data1['training_labels']+data2['training_labels']+data3['training_labels']+data4['training_labels']+data5['training_labels']+data6['training_labels']
     validation_mails = data1['validation_mails']+data2['validation_mails']
     validation_labels = data1['validation_labels']+data2['validation_labels']
     test_mails = data1['test_mails']+data2['test_mails']
@@ -218,8 +231,8 @@ def main():
     # ahora vamos a crear el clasificador y entrenarlo
     # primero vamos a construir los descriptores de la bolsa de palabras de cada
     # correo
-    clasificador = "Multinomial"
-    suavizado = mejor_alpha(10, training_mails, training_labels,
+    clasificador = "Bernoulli"
+    suavizado = mejor_alpha(5, training_mails, training_labels,
                               validation_mails, validation_labels, clasificador)
     print "El mejor suavizado es:", suavizado
 
@@ -242,7 +255,7 @@ def main():
     errores_test = num_errores(test_predictions, test_labels) / float(len(
                                                             test_predictions))
     print "Porcentaje de fallos: ", errores_test * 100, "%"
-    print "Porcentaje de aciertos: ", (1 - puntuacion) * 100, "%"
+    print "Porcentaje de aciertos: ", (1 - errores_test) * 100, "%"
     return 1
 
 if __name__ == "__main__":
