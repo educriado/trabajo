@@ -236,7 +236,7 @@ def main():
     # ahora vamos a crear el clasificador y entrenarlo
     # primero vamos a construir los descriptores de la bolsa de palabras de cada
     # correo
-    clasificador = "Multinomial"
+    clasificador = "Bernoulli"
     uso_bigramas = True
     suavizado = mejor_alpha(5, training_mails, training_labels, validation_mails,
                                 validation_labels, clasificador, uso_bigramas)

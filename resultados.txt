@@ -22,8 +22,18 @@ Resultados con clasificador Multinomial, alpha = 1, usando bigramas
 ===================================================================
 Porcentaje de fallos:  1.3611615245 %
 Porcentaje de aciertos:  98.6388384755 %
+Matriz de confusion:
+[[791  12]
+ [  5 294]]
+F1 score:
+0.971900826446
 
 Resultados con clasificador Bernoulli, alpha = , usando bigramas
 ===================================================================
 Porcentaje de fallos:  4.17422867514 %
 Porcentaje de aciertos:  95.8257713249 %
+Matriz de confusion:
+[[754  49]
+ [  1 298]]
+F1 score:
+0.922600619195
