@@ -202,6 +202,42 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
             error_mejor = error_validation
     return mejor_alpha
 
+##########################################################
+## devuelve correos bien clasificados y mal, de ham y spam
+##########################################################
+def correos_bien_mal(test_labels, predicciones):
+    encontrados, indice = 0, 0
+    resultados = {'spam_bien': "vacio",
+           'spam_mal' : "vacio",
+           'ham_bien': "vacio",
+           'ham_mal': "vacio"}
+    while encontrados < 4:
+        if test_labels[indice] == 1:
+            # es spam
+            if (predicciones[indice] == 1) and \
+               (resultados['spam_bien'] == "vacio"):
+                encontrados += 1
+                resultados['spam_bien'] == indice
+            elif (predicciones[indice] == 0) and \
+                 (resultados['spam_mal'] == "vacio"):
+                 encontrados += 1
+                 resultados['spam_mal'] == indice
+        else:
+            # ham
+            if (predicciones[indice] == 0) and \
+               (resultados['ham_bien'] == "vacio"):
+                encontrados += 1
+                resultados['ham_bien'] == indice
+            elif (predicciones[indice] == 1) and \
+                 (resultados['ham_mal'] == "vacio"):
+                 encontrados += 1
+                 resultados['ham_mal'] == indice
+        indice += 1
+
+    return resultados
+
+
+
 ######################################################
 # Main
 ######################################################
@@ -229,10 +265,10 @@ def main():
     data6 = load_enron_folder(folder_enron6)
     training_mails = data1['training_mails']+data2['training_mails']+data3['training_mails']+data4['training_mails']+data5['training_mails']+data6['training_mails']
     training_labels = data1['training_labels']+data2['training_labels']+data3['training_labels']+data4['training_labels']+data5['training_labels']+data6['training_labels']
-    validation_mails = data1['validation_mails']+data2['validation_mails']
-    validation_labels = data1['validation_labels']+data2['validation_labels']
-    test_mails = data1['test_mails']+data2['test_mails']
-    test_labels = data1['test_labels']+data2['test_labels']
+    validation_mails = data1['validation_mails']+data2['validation_mails']+data3['validation_mails']+data4['validation_mails']+data5['validation_mails']+data6['validation_mails']
+    validation_labels = data1['validation_labels']+data2['validation_labels']+data3['validation_labels']+data4['validation_labels']+data5['validation_labels']+data6['validation_labels']
+    test_mails = data1['test_mails']+data2['test_mails']+data3['test_mails']+data4['test_mails']+data5['test_mails']+data6['test_mails']
+    test_labels = data1['test_labels']+data2['test_labels']+data3['test_labels']+data4['test_labels']+data5['test_labels']+data6['test_labels']
     # ahora vamos a crear el clasificador y entrenarlo
     # primero vamos a construir los descriptores de la bolsa de palabras de cada
     # correo
@@ -259,7 +295,6 @@ def main():
     else:
        classifier = BernoulliNB(suavizado).fit(frecuencias_training,
                                                         training_labels)
-    #Se predice con los valore de test
     test_predictions = classifier.predict(frecuencias_test)
     errores_test = num_errores(test_predictions, test_labels) / float(len(
                                                             test_predictions))
@@ -274,6 +309,17 @@ def main():
     plt.show()
     f1_score = metrics.f1_score(test_labels, test_predictions)
     print f1_score
+
+    # vamos a poner ejemplos de corres bien y mal clasificados
+    indices_correos = correos_bien_mal(test_labels, test_predictions)
+    print "El siguiente correo es spam y esta clasificado como tal"
+    print test_mails[indices_correos['spam_bien']]
+    print "El siguiente correo es spam y esta mal clasificado"
+    print test_mails[indices_correos['spam_mal']]
+    print "El siguiente correo es ham y esta clasificado como tal"
+    print test_mails[indices_correos['ham_bien']]
+    print "El siguiente correo es ham y esta mal clasificado"
+    print test_mails[indices_correos['ham_mal']]  
     return 1
 
 if __name__ == "__main__":
