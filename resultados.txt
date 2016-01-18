@@ -37,3 +37,44 @@ Matriz de confusion:
  [  1 298]]
 F1 score:
 0.922600619195
+
+Indices de correos mal clasificados
+===================================
+{'spam_mal': 494, 'ham_bien': 0, 'spam_bien': 367, 'ham_mal': 22}
+
+El siguiente correo es spam y esta clasificado como tal
+
+Subject: viagra soft tabs
+viagra soft tabs is the # 1 med to struggle with mens ' erectile dysfunction .
+...
+order now
+remove your email
+
+El siguiente correo es spam y esta mal clasificado
+
+Subject: links swap / exchange
+dear all ,
+we are searching for links partners for a couple of websites we run .
+link exchange will improve search ranking positions of both your and our
+...
+looking forward to hearing from you soon .
+br ,
+mary james
+links manager
+
+El siguiente correo es ham y esta clasificado como tal
+
+Subject: enron / hpl actuals for october 26 , 2000
+teco tap 100 . 000 / hpl gas daily
+
+El siguiente correo es ham y esta mal clasificado
+
+Subject: valentines day help
+red - neck valentine ' s love poem
+collards is green
+my dog ' s name is blue
+...
+it ' s a new trollin ' motor ! !
+l shore due luv you darling ,
+aint love grand ! ! ! ! . . . . .
+bubba

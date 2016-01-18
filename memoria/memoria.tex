@@ -30,7 +30,7 @@ a utilizar el paquete matplotlib.
 
 \subsection{Entrenamiento del clasificador}
 El procedimiento para el entrenamiento del clasificador consiste en seguir
-determinados pasos:
+estos determinados pasos:
 \begin{itemize}
 	\item Creaci\'on de la estructura de bolsas de palabras: este modelo nos
 	permite representar un texto con las palabras que contiene. No importa
@@ -38,17 +38,32 @@ determinados pasos:
 	tiene la misma probabilidad. Sacamos la probabilidad por tanto de la
 	uni\'on de las probabilidades de cada palabra de ser spam.
 
+	Podemos tambi\'en considerar que el orden es importante y usar bigramas,
+	pasando por par\'ametro un valor especial al m\'etodo que crea la
+	estructura. Esto relaja la suposici\'on de que hay independencia entre
+	las distintas palabras en un texto.
+
 	\item Llenado de la estructura con las cuentas: llamando a un m\'etodo
 	autom\'aticamente se calcula la cuenta de aparici\'on de cada palabra.
 
 	\item Creaci\'on de la estructura con la frecuencia de las palabras
+
 	\item C\'alculo de las frecuencias de las palabras: lo mismo que antes,
 	esto se realiza de forma autom\'atica con un m\'etodo.
+
 	\item Selecci\'on de un m\'etodo de aprendizaje para el clasificador:
 	para ello tenemos que elegir un valor de suavizado de Laplace adecuado.
 	Este lo calculamos antes mediante el algoritmo de k-fold cross
-	validation, que esta explicado m\'as abajo.
-	\item Predicci\'on de los resultados utilizando los correos de test:
+	validation, que esta explicado m\'as abajo. Podemos elegir entre la
+	distribuci\'on Multinomial y la distribuci\'on Bernoulli. Para esta
+	parte es importante usar los datos de validaci\'on para ajustar los
+	hiperpar\'ametros (suavizado de Laplace), no los datos de test, que solo
+	los usaremos al final para evaluar el funcionamiento del detector de
+	spam.
+
+	\item Predicci\'on de los resultados utilizando los correos de test: por
+	\'ultimo llamamos al m\'etodo que clasifica los correos en spam y ham
+	con lo ya aprendido.
 \end{itemize}
 
 \subsection{Evaluaci\'on del clasificador}
@@ -56,9 +71,16 @@ determinados pasos:
 Para comparar las distintas configuraciones posibles se utilizan tres
 m\'etricas:
 \begin{itemize}
-	\item Matriz de confusi\'on:
-	\item Curva precisi\'on recall:
-	\item F1 score:
+	\item Matriz de confusi\'on: representa las resultados de la
+	predicci\'on frente a las instancias reales. 
+
+	\item Curva precisi\'on recall: la precisi\'on es la fracci\'on
+	de correos que son spam y los clasificamos bien del total que
+	clasificamos como spam.
+	El recall es la fracci\'on de correos que clasificamos como spam y lo
+	son del total de correos spam. 
+	\item F1 score: se trata de una media de la precisi\'on y el recall.
+	Cuanto m\'as alta mejor.
 \end{itemize}
 Los resultados que hemos obtenido han sido los siguientes:
 \begin{verbatim}
@@ -103,6 +125,13 @@ F1 score:
 0.922600619195
 \end{verbatim}
 
-\section{Anexo: K-fold cross validation}
+Las curvas de precisi\'on recall son las siguientes:
+% \section{Anexo: K-fold cross validation}
 % si da espacio y TIEMPO explicar el algoritmo; puede ser bueno para rellenar
+
+\section{Conclusiones}
+Atendiendo a los resultados la mejor opci\'on es elegir una distribuci\'on
+multinomial, con suavizado igual a 1, sin usar bigramas. El uso de bigramas
+hace la ejecuci\'on mucho m\'as lenta y en este caso no produce una mejora en
+los resultados. 
 \end{document}
