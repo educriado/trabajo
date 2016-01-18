@@ -1,0 +1,86 @@
+\begin{document}
+
+\section{Introducci\'on}
+El objetivo de esta segunda parte del TP6 de la asignatura de Inteligencia
+Artificial es el desarrollo de un detector de spam (correo basura) usando
+un clasificador de Bayes ingenuo.
+
+Para ello vamos a utilizar la base de datos p\'ublica Enron-Spam, que contiene
+correos electr\'onicos preprocesador para realizar este tipo de an\'alisis.
+El lenguaje para la implementaci\'on es \textit{Python} y vamos a hacer uso del
+paquete \textit{scikit\_learn} para el aprendizaje del clasificador.
+Por \'ultimo, para dibujar alguna gr\'afica de los resultados tambi\'en vamos
+a utilizar el paquete matplotlib.
+
+\section{Desarrollo de la pr\'actica}
+
+\subsection{Entrenamiento del clasificador}
+El procedimiento para el entrenamiento del clasificador consiste en seguir
+determinados pasos:
+\begin{itemize}
+	\item Creaci\'on de la estructura de bolsas de palabras:
+	\item Llenado de la estructura con las cuentas:
+	\item Creaci\'on de la estructura con la frecuencia de las palabras:
+	\item C\'alculo de las frecuencias de las palabras:
+	\item Selecci\'on de un m\'etodo de aprendizaje para el clasificador:
+	para ello tenemos que elegir un valor de suavizado de Laplace adecuado.
+	Este lo calculamos antes y en este caso con unas divisiones en cinco del
+	conjunto de correos ha sido el valor 1 siempre el \'optimo.
+	\item Predicci\'on de los resultados utilizando los correos de test:
+\end{itemize}
+
+\subsection{Evaluaci\'on del clasificador}
+% incluir todas las imagenes
+Para comparar las distintas configuraciones posibles se utilizan tres
+m\'etricas:
+\begin{itemize}
+	\item Matriz de confusi\'on:
+	\item Curva precisi\'on recall:
+	\item F1 score:
+\end{itemize}
+Los resultados que hemos obtenido han sido los siguientes:
+\begin{verbatim}
+Resultados con clasificador Multinomial, alpha = 1
+==================================================
+Porcentaje de fallos:  0.998185117967 %
+Porcentaje de aciertos:  99.001814882 %
+Matriz de confusion:
+[[794   9]
+ [  6 293]]
+F1 score:
+0.975041597338
+
+Resultados con clasficador Bernoulli, alpha = 1
+==================================================
+Porcentaje de fallos:  1.17967332123 %
+Porcentaje de aciertos:  98.8203266788 %
+Matriz de confusion:
+[[786  17]
+ [  4 295]]
+F1 score:
+0.965630114566
+
+Resultados con clasificador Multinomial, alpha = 1, usando bigramas
+===================================================================
+Porcentaje de fallos:  1.3611615245 %
+Porcentaje de aciertos:  98.6388384755 %
+Matriz de confusion:
+[[791  12]
+ [  5 294]]
+F1 score:
+0.971900826446
+
+Resultados con clasificador Bernoulli, alpha = , usando bigramas
+===================================================================
+Porcentaje de fallos:  4.17422867514 %
+Porcentaje de aciertos:  95.8257713249 %
+Matriz de confusion:
+[[754  49]
+ [  1 298]]
+F1 score:
+0.922600619195
+\end{verbatim}
+
+\section{Anexo: K-fold cross validation}
+% si da espacio y TIEMPO explicar el algoritmo; puede ser bueno para rellenar
+\end{document}
