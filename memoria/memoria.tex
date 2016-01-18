@@ -32,14 +32,22 @@ a utilizar el paquete matplotlib.
 El procedimiento para el entrenamiento del clasificador consiste en seguir
 determinados pasos:
 \begin{itemize}
-	\item Creaci\'on de la estructura de bolsas de palabras: este modelo
-	\item Llenado de la estructura con las cuentas:
-	\item Creaci\'on de la estructura con la frecuencia de las palabras:
-	\item C\'alculo de las frecuencias de las palabras:
+	\item Creaci\'on de la estructura de bolsas de palabras: este modelo nos
+	permite representar un texto con las palabras que contiene. No importa
+	la posici\'on ni la frase de la que forme parte. Ademas, cada posici\'on
+	tiene la misma probabilidad. Sacamos la probabilidad por tanto de la
+	uni\'on de las probabilidades de cada palabra de ser spam.
+
+	\item Llenado de la estructura con las cuentas: llamando a un m\'etodo
+	autom\'aticamente se calcula la cuenta de aparici\'on de cada palabra.
+
+	\item Creaci\'on de la estructura con la frecuencia de las palabras
+	\item C\'alculo de las frecuencias de las palabras: lo mismo que antes,
+	esto se realiza de forma autom\'atica con un m\'etodo.
 	\item Selecci\'on de un m\'etodo de aprendizaje para el clasificador:
 	para ello tenemos que elegir un valor de suavizado de Laplace adecuado.
-	Este lo calculamos antes y en este caso con unas divisiones en cinco del
-	conjunto de correos ha sido el valor 1 siempre el \'optimo.
+	Este lo calculamos antes mediante el algoritmo de k-fold cross
+	validation, que esta explicado m\'as abajo.
 	\item Predicci\'on de los resultados utilizando los correos de test:
 \end{itemize}
 

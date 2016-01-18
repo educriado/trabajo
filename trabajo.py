@@ -206,34 +206,36 @@ def mejor_alpha(k, training_mails, training_labels, validation_mails,
 ## devuelve correos bien clasificados y mal, de ham y spam
 ##########################################################
 def correos_bien_mal(test_labels, predicciones):
-    encontrados, indice = 0, 0
-    resultados = {'spam_bien': "vacio",
-           'spam_mal' : "vacio",
-           'ham_bien': "vacio",
-           'ham_mal': "vacio"}
-    while encontrados < 4:
-        if test_labels[indice] == 1:
+    encontrados = 0 
+    indice = 0
+    resultados = {'spam_bien': -1,
+           'spam_mal' : -1,
+           'ham_bien': -1,
+           'ham_mal': -1}
+    while (encontrados < 4) and (indice < len(test_labels)):
+        if int(test_labels[indice]) == 1:
             # es spam
-            if (predicciones[indice] == 1) and \
-               (resultados['spam_bien'] == "vacio"):
+            if (int(predicciones[indice]) == 1) and \
+               (resultados['spam_bien'] == -1):
                 encontrados += 1
-                resultados['spam_bien'] == indice
-            elif (predicciones[indice] == 0) and \
-                 (resultados['spam_mal'] == "vacio"):
+                resultados['spam_bien'] = indice
+            elif (int(predicciones[indice]) == 0) and \
+                 (resultados['spam_mal'] == -1):
                  encontrados += 1
-                 resultados['spam_mal'] == indice
+                 resultados['spam_mal'] = indice
         else:
             # ham
             if (predicciones[indice] == 0) and \
-               (resultados['ham_bien'] == "vacio"):
+               (int(resultados['ham_bien']) == -1):
                 encontrados += 1
-                resultados['ham_bien'] == indice
-            elif (predicciones[indice] == 1) and \
-                 (resultados['ham_mal'] == "vacio"):
+                resultados['ham_bien'] = indice
+            elif (int(predicciones[indice]) == 1) and \
+                 (resultados['ham_mal'] == -1):
                  encontrados += 1
-                 resultados['ham_mal'] == indice
+                 resultados['ham_mal'] = indice
         indice += 1
 
+    print resultados
     return resultados
 
 
@@ -273,7 +275,7 @@ def main():
     # primero vamos a construir los descriptores de la bolsa de palabras de cada
     # correo
     clasificador = "Bernoulli"
-    uso_bigramas = True
+    uso_bigramas = False
     suavizado = mejor_alpha(5, training_mails, training_labels, validation_mails,
                                 validation_labels, clasificador, uso_bigramas)
     print "El mejor suavizado es:", suavizado
@@ -306,7 +308,7 @@ def main():
     precision, recall, thresholds = metrics.precision_recall_curve(test_labels,
                                                             test_predictions)
     plt.plot(precision, recall, label="Curva de precision recall")
-    plt.show()
+    # plt.show()
     f1_score = metrics.f1_score(test_labels, test_predictions)
     print f1_score
 
@@ -314,11 +316,11 @@ def main():
     indices_correos = correos_bien_mal(test_labels, test_predictions)
     print "El siguiente correo es spam y esta clasificado como tal"
     print test_mails[indices_correos['spam_bien']]
-    print "El siguiente correo es spam y esta mal clasificado"
+    print "El siguiente correo es spam y esta clasificado como ham"
     print test_mails[indices_correos['spam_mal']]
     print "El siguiente correo es ham y esta clasificado como tal"
     print test_mails[indices_correos['ham_bien']]
-    print "El siguiente correo es ham y esta mal clasificado"
+    print "El siguiente correo es ham y esta clasificado como spam"
     print test_mails[indices_correos['ham_mal']]  
     return 1
 
